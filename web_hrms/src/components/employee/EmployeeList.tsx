@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { EmployeeColumns } from "@/lib/employee/columns";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { Input } from "../ui/input";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -18,34 +18,39 @@ interface IEmployeeListProps {
   total: number;
   currentPage: number;
   query: unknown;
+  onFilterChange: (filter: string) => void;
+  onDeleteRecord: (hasDeleted: boolean) => void;
 }
 
 const EmployeeList = ({
   employeeData,
   columns,
-}: 
-IEmployeeListProps) => {
+  onFilterChange,
+  onDeleteRecord,
+}: IEmployeeListProps) => {
   const router = useRouter();
-  const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
+  const [filter, setFilter] = useState("");
+
   const openDialog = useAlertDialogStore((state) => state.openDialog);
 
   const handleRedirectToEdit = (id: string) => {
     router.push(`/employee/employeeDetails?id=${id}&preview=false`);
   };
+
   const handleRedirectToDetails = (id: string) => {
     router.push(`/employee/employeeDetails?id=${id}&preview=true`);
   };
 
-  const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setGlobalFilterValue(e.target!.value! || "");
+  const handleFilterChange = (filter: string) => {
+    setFilter(filter);
+    onFilterChange(filter);
   };
 
   const handleDelete = async (id: string) => {
     const response: EmployeeResponseDelete = await deleteEmployee(id);
     if (response.success) {
-      console.log(` SuccessFully Delete`);
-      console.log(response);
+      console.log("1")
+      onDeleteRecord(true);
     }
 
     openDialog("Do you really want to delete this item?", async () => {
@@ -60,8 +65,8 @@ IEmployeeListProps) => {
       <div className="max-w-[1180px] mx-auto py-6 flex items-center justify-between">
         <Input
           placeholder="Filter by name or department..."
-          value={globalFilterValue}
-          onChange={(e) => handleFilterChange(e)}
+          value={filter}
+          onChange={(e) => handleFilterChange(e.target.value)}
           className="max-w-xs"
         />
         <Link href="/employee/employeeCreate">

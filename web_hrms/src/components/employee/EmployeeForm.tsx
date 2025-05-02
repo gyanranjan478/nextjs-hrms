@@ -15,20 +15,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { addEmployee } from "@/app/api/employeeApi";
+import { addEmployee, EmployeeResponseAdd } from "@/app/api/employeeApi";
 import { IEmployee } from "@/types/employee";
+// import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   name: z
     .string()
     .min(3, { message: "First name must be at least 3 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
-  department: z.enum(["IIT", "Sales", "HR"], {
-    errorMap: () => ({ message: "Position is required." }),
-  }),
+  department: z.string().min(3, {message:"Minimum 3 chars are required"}),
 });
 
 const EmployeeForm = () => {
+  // const { toast } = useToast();
+
   // Create a form instance from shadcn componennt function
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,15 +42,18 @@ const EmployeeForm = () => {
 
   // Handle submit event of the form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Form submitted:", values);
-
-    const employee: IEmployee = {
+       const employee: IEmployee = {
       name: values.name,
       email: values.email,
       department: values.department,
     };
-    const res = await addEmployee(employee);
-    console.log(res);
+    const res:EmployeeResponseAdd = await addEmployee(employee);
+   if(res.success){
+    // toast({
+    //   title: "Add Employee:",
+    //   description: "Successfully",
+    // });
+   }
   };
 
   return (
