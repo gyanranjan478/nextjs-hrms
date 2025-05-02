@@ -9,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,43 +17,44 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { addEmployee, EmployeeResponseAdd } from "@/app/api/employeeApi";
 import { IEmployee } from "@/types/employee";
-// import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   name: z
     .string()
     .min(3, { message: "First name must be at least 3 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
-  department: z.string().min(3, {message:"Minimum 3 chars are required"}),
+  department: z.string().min(3, { message: "Minimum 3 chars are required" }),
 });
 
 const EmployeeForm = () => {
-  // const { toast } = useToast();
-
-  // Create a form instance from shadcn componennt function
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
-      department: "IIT",
+      department: "",
     },
   });
 
+  
   // Handle submit event of the form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-       const employee: IEmployee = {
+    const employee: IEmployee = {
       name: values.name,
       email: values.email,
       department: values.department,
     };
-    const res:EmployeeResponseAdd = await addEmployee(employee);
-   if(res.success){
-    // toast({
-    //   title: "Add Employee:",
-    //   description: "Successfully",
-    // });
-   }
+    const res: EmployeeResponseAdd = await addEmployee(employee);
+    if (res.success) {
+      form.reset();
+      toast.success("Add Employee!", {
+        description: "Successfully added new employee!",
+      });
+    } else {
+      toast.error("Add Employee!", {
+        description: "Failed to add new employee!",
+      });
+    }
   };
 
   return (
