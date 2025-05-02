@@ -21,7 +21,7 @@ const formSchema = z.object({
     .string()
     .min(3, { message: "First name must be at least 3 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
-  department: z.enum(["IT", "Sales", "HR"], {
+  department: z.enum(["IIT", "Sales", "HR"], {
     errorMap: () => ({ message: "Position is required." }),
   }),
 });
@@ -33,7 +33,7 @@ const EmployeeForm = () => {
     defaultValues: {
       name: "",
       email: "",
-      department: "IT",
+      department: "IIT",
     },
   });
 

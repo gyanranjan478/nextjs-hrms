@@ -1,11 +1,31 @@
 export interface IEmployee {
   id: number;
-  first_name: string;
-  last_name: string;
+  name: string;
   email: string;
-  is_active: boolean;
-  designation: string;
-  phone_number: string;
-  salary: number;
-  created_at: Date;
+  department: string;
 }
+
+export interface IEmployeePageProps {
+  columns: EmployeeColumns;
+  employees: IEmployee[];
+  total: number;
+  page: string;
+  limit: string;
+  sortBy: string;
+  sortOrder: "asc" | "desc";
+  filters: {
+    name: string;
+    department: string;
+  };
+}
+
+export type EmployeeColumns = {
+  id: string;
+  name: string;
+  department: string;
+};
+
+export type EmployeeFilters = {
+  name: string;
+  department: string;
+};
