@@ -50,6 +50,9 @@ const EmployeeList = ({ employeeData, columns }: IEmployeeListProps) => {
               id: employee.id.toString(),
             }))}
             columns={columns}
+            onEdit={(row) => console.log("Edit:", row)}
+            onDelete={(row) => console.log("Delete:", row)}
+            onDetails={(row) => console.log("Details:", row)}
           />
         </CardContent>
       </Card>

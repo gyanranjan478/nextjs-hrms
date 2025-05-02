@@ -1,5 +1,4 @@
 "use client";
-
 import {
   ColumnDef,
   flexRender,
@@ -7,7 +6,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -22,7 +20,10 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-} from "lucide-react";
+  Edit,
+  Trash,
+  Eye,
+} from "lucide-react"; // Import icons for actions
 import {
   Select,
   SelectContent,
@@ -34,15 +35,55 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onEdit: (row: TData) => void; // Callback for Edit
+  onDelete: (row: TData) => void; // Callback for Delete
+  onDetails: (row: TData) => void; // Callback for View Details
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onEdit,
+  onDelete,
+  onDetails,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
-    columns,
+    columns: [
+      ...columns, // Existing columns
+      {
+        id: "actions", // Unique ID for the action column
+        header: "Actions", // Column header text
+        cell: ({ row }) => (
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onEdit(row.original)}
+              className="p-0"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onDelete(row.original)}
+              className="p-0"
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onDetails(row.original)}
+              className="p-0"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
@@ -58,19 +99,16 @@ export function DataTable<TData, TValue>({
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                  
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
@@ -97,11 +135,8 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <div className="flex items-center space-x-2 justify-end pt-10 ">
-        {/* <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div> */}
+      {/* Pagination Controls */}
+      <div className="flex items-center space-x-2 justify-end pt-10">
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Rows per page</p>
