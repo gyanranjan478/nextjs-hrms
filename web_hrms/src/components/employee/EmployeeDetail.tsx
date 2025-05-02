@@ -60,7 +60,7 @@ const EmployeeDetail = () => {
         // Make the API call
         const response: EmployeeResponseById = await getEmployee(id!);
 
-        // Check if the response is ok
+        
         if (!response.success) {
           throw new Error("Failed to fetch data");
         }
@@ -69,11 +69,11 @@ const EmployeeDetail = () => {
       } catch (error) {
         console.log(error);
       } finally {
-        // setLoading(false);
+      
       }
     };
 
-    // Call the async function
+    
     fetchData();
   }, []);
 

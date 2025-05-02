@@ -10,6 +10,7 @@ export interface EmployeeGetParam {
   sortOrder?: "asc" | "desc";
   filterByRole?: string;
 }
+
 export interface EmployeeAddParam {
   name: string;
   email: string;
@@ -21,15 +22,18 @@ export interface EmployeeResponseById {
   success: boolean;
   message: string;
 }
+
 export interface EmployeeResponseDelete {
   success: boolean;
   message: string;
 }
+
 export interface EmployeeResponseGetAll {
   current_page: number;
   total: number;
   data: IEmployee[];
 }
+
 export interface EmployeeResponseAdd {
   success: boolean;
   message: string;
@@ -52,20 +56,6 @@ export const addEmployee = async (data: IEmployee) => {
     data
   );
   return response.data;
-
-  // axios
-  //   .post(`${API_URL}/add`, data, {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "Access-Control-Allow-Origin": "http://localhost:3000",
-  //       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  //     },
-  //   })
-  //   .then((response) => {
-  //     console.log(response);
-  //     return response;
-  //   })
-  //   .catch((error) => console.error(error));
 };
 
 export const getEmployee = async (id: string) => {
