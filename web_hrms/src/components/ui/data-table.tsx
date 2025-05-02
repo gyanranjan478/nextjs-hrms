@@ -4,6 +4,7 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -31,26 +32,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@radix-ui/react-select";
-
-
+ 
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pageSize: number;
+  searchable: boolean;
+  total: number;
+  pageIndex: number;
+  sort: SortingState;
   onEdit: (row: TData) => void; // Callback for Edit
   onDelete: (row: TData) => void; // Callback for Delete
   onDetails: (row: TData) => void; // Callback for View Details
+  onPageChange: (page: number) => void;
+  onSortingChange: (sort: SortingState) => void;
+  onFilterChange: (filter: string) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  pageSize = 10,
+  searchable = true,
+  total,
+  pageIndex,
+  sort, 
   onEdit,
   onDelete,
   onDetails,
+  onPageChange,
+  onSortingChange,
+  onFilterChange,
 }: DataTableProps<TData, TValue>) {
- 
-
+  const pagination = { pageIndex: 0, pageSize };
+  
   const table = useReactTable({
     data,
     columns: [
@@ -76,19 +92,23 @@ export function DataTable<TData, TValue>({
             >
               <Trash className="h-4 w-4" />
             </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => onDetails(row.original)}
-                className="p-0"
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-             
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onDetails(row.original)}
+              className="p-0"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
           </div>
         ),
       },
     ],
+    rowCount: total,
+    state: { pagination, sort },
+    pageCount: Math.ceil(total / pagination.pageSize),
+    manualPagination: true,
+    manualSorting: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
