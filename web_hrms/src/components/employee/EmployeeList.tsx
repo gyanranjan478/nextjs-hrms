@@ -8,6 +8,9 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { useAlertDialogStore } from "@/lib/confirmDialogStore";
+import { deleteEmployee, EmployeeResponseDelete } from "@/app/api/employeeApi";
 
 interface IEmployeeListProps {
   columns: ColumnDef<EmployeeColumns>[];
@@ -18,7 +21,30 @@ interface IEmployeeListProps {
 }
 
 const EmployeeList = ({ employeeData, columns }: IEmployeeListProps) => {
+  const router = useRouter();
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
+  const openDialog = useAlertDialogStore((state) => state.openDialog);
+
+  const handleRedirectToEdit = (id: string) => {
+    router.push(`/employee/employeeDetails?id=${id}`);
+  };
+
+  const handleDelete = async (id: string) => {
+    debugger
+     console.log(id);
+      const response: EmployeeResponseDelete = await deleteEmployee(id);
+      if(response.success){
+        console.log(` SuccessFully Delete`);
+         console.log(response);
+      }
+     
+
+    openDialog("Do you really want to delete this item?", async () => {
+      console.log("Confirmed deletion!");
+      const response = await deleteEmployee(id);
+      console.log(response);
+    });
+  };
 
   return (
     <div className="w-full">
@@ -47,11 +73,11 @@ const EmployeeList = ({ employeeData, columns }: IEmployeeListProps) => {
           <DataTable
             data={employeeData.map((employee) => ({
               ...employee,
-              id: employee.id.toString(),
+              id: employee.id!.toString(),
             }))}
             columns={columns}
-            onEdit={(row) => console.log("Edit:", row)}
-            onDelete={(row) => console.log("Delete:", row)}
+            onEdit={(row) => handleRedirectToEdit(row.id)}
+            onDelete={(row) => handleDelete(row.id)}
             onDetails={(row) => console.log("Details:", row)}
           />
         </CardContent>

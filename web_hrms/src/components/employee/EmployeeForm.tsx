@@ -15,6 +15,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { addEmployee } from "@/app/api/employeeApi";
+import { IEmployee } from "@/types/employee";
 
 const formSchema = z.object({
   name: z
@@ -38,8 +40,16 @@ const EmployeeForm = () => {
   });
 
   // Handle submit event of the form
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:", values);
+
+    const employee: IEmployee = {
+      name: values.name,
+      email: values.email,
+      department: values.department,
+    };
+    const res = await addEmployee(employee);
+    console.log(res);
   };
 
   return (

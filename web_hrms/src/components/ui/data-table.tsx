@@ -32,6 +32,8 @@ import {
   SelectValue,
 } from "@radix-ui/react-select";
 
+
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -47,6 +49,8 @@ export function DataTable<TData, TValue>({
   onDelete,
   onDetails,
 }: DataTableProps<TData, TValue>) {
+ 
+
   const table = useReactTable({
     data,
     columns: [
@@ -72,14 +76,15 @@ export function DataTable<TData, TValue>({
             >
               <Trash className="h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onDetails(row.original)}
-              className="p-0"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => onDetails(row.original)}
+                className="p-0"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+             
           </div>
         ),
       },
