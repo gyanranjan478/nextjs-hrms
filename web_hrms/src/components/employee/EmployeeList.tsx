@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { EmployeeColumns } from "@/lib/employee/columns";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Input } from "../ui/input";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -20,24 +20,33 @@ interface IEmployeeListProps {
   query: unknown;
 }
 
-const EmployeeList = ({ employeeData, columns }: IEmployeeListProps) => {
+const EmployeeList = ({
+  employeeData,
+  columns,
+}: 
+IEmployeeListProps) => {
   const router = useRouter();
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const openDialog = useAlertDialogStore((state) => state.openDialog);
 
   const handleRedirectToEdit = (id: string) => {
-    router.push(`/employee/employeeDetails?id=${id}`);
+    router.push(`/employee/employeeDetails?id=${id}&preview=false`);
+  };
+  const handleRedirectToDetails = (id: string) => {
+    router.push(`/employee/employeeDetails?id=${id}&preview=true`);
+  };
+
+  const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setGlobalFilterValue(e.target!.value! || "");
   };
 
   const handleDelete = async (id: string) => {
-    debugger
-     console.log(id);
-      const response: EmployeeResponseDelete = await deleteEmployee(id);
-      if(response.success){
-        console.log(` SuccessFully Delete`);
-         console.log(response);
-      }
-     
+    const response: EmployeeResponseDelete = await deleteEmployee(id);
+    if (response.success) {
+      console.log(` SuccessFully Delete`);
+      console.log(response);
+    }
 
     openDialog("Do you really want to delete this item?", async () => {
       console.log("Confirmed deletion!");
@@ -52,7 +61,7 @@ const EmployeeList = ({ employeeData, columns }: IEmployeeListProps) => {
         <Input
           placeholder="Filter by name or department..."
           value={globalFilterValue}
-          onChange={(e) => setGlobalFilterValue(e.target.value || "")}
+          onChange={(e) => handleFilterChange(e)}
           className="max-w-xs"
         />
         <Link href="/employee/employeeCreate">
@@ -78,7 +87,7 @@ const EmployeeList = ({ employeeData, columns }: IEmployeeListProps) => {
             columns={columns}
             onEdit={(row) => handleRedirectToEdit(row.id)}
             onDelete={(row) => handleDelete(row.id)}
-            onDetails={(row) => console.log("Details:", row)}
+            onDetails={(row) => handleRedirectToDetails(row.id)}
           />
         </CardContent>
       </Card>

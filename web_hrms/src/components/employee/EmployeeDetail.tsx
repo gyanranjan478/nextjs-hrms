@@ -40,8 +40,10 @@ const EmployeeDetail = () => {
     email: "",
     department: "",
   });
-
-  const id = searchParams.get("id");
+  const preview: string | null = searchParams.get("preview");
+  const id: string | null = searchParams.get("id");
+  const isPreview = preview === "true";
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -167,15 +169,17 @@ const EmployeeDetail = () => {
 
             {!isEditing ? (
               <div className="flex gap-2 items-center">
-                <Button
-                  aria-label="Edit employee"
-                  title="Edit employee"
-                  type="button"
-                  className="w-fit bg-black text-white"
-                  onClick={() => setIsEditing(true)}
-                >
-                  <PencilLine className="h-3 w-3" />
-                </Button>
+                {!isPreview && (
+                  <Button
+                    aria-label="Edit employee"
+                    title="Edit employee"
+                    type="button"
+                    className="w-fit bg-black text-white"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <PencilLine className="h-3 w-3" />
+                  </Button>
+                )}
                 <Link href="/">
                   <Button aria-label="Back" title="Back" type="button">
                     <ArrowLeft className="w-3 h-3" />

@@ -2,6 +2,7 @@
 import {
   ColumnDef,
   flexRender,
+  getFilteredRowModel,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
@@ -31,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@radix-ui/react-select";
-
 
 
 interface DataTableProps<TData, TValue> {
@@ -76,21 +76,21 @@ export function DataTable<TData, TValue>({
             >
               <Trash className="h-4 w-4" />
             </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => onDetails(row.original)}
-                className="p-0"
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-             
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onDetails(row.original)}
+              className="p-0"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
           </div>
         ),
       },
     ],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     initialState: {
       pagination: {
         pageSize: 5,
@@ -100,6 +100,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
+
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
